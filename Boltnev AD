@@ -1,0 +1,99 @@
+#include <stdio.h>
+#include <math.h>
+
+typedef struct {
+    double salary;
+    double monthly_expenses;
+    double current_wealth;
+    double house_cost;
+    double mortgage_remaining;
+    double mortgage_monthly_payment;
+    double interest_rate;
+    int has_pet;
+    double pet_monthly_expenses;
+} Individual;
+
+
+void update_alice_salary(Individual* alice, double salary_growth) {
+    alice->salary *= (1 + salary_growth);
+}
+
+void calculate_alice_mortgage(Individual* alice) {
+    alice->current_wealth -= alice->mortgage_monthly_payment;
+    alice->mortgage_remaining *= (1 + alice->interest_rate / 12);
+}
+
+void calculate_alice_monthly_expenses(Individual* alice) {
+    alice->current_wealth -= alice->monthly_expenses;
+}
+
+void process_alice_annual_bonus(Individual* alice) {
+    alice->current_wealth += alice->salary * 0.1;
+}
+
+
+
+void update_bob_salary(Individual* bob, double salary_growth) {
+    bob->salary *= (1 + salary_growth);
+}
+
+void calculate_bob_monthly_expenses(Individual* bob) {
+    bob->current_wealth -= bob->monthly_expenses;
+}
+
+void process_bob_annual_bonus(Individual* bob) {
+    bob->current_wealth += bob->salary * 0.1;
+}
+
+
+int main() {
+    Individual alice, bob;
+
+    alice.salary = 25000;
+    alice.monthly_expenses = 5000;
+    alice.current_wealth = 0;
+    alice.mortgage_remaining = 1000000;
+    alice.mortgage_monthly_payment = 5000;
+    alice.interest_rate = 0.1;
+    alice.has_pet = 0;
+    alice.pet_monthly_expenses = 0;
+
+
+    bob.salary = 28000;
+    bob.monthly_expenses = 4000;
+    bob.current_wealth = 0;
+    bob.house_cost = 5000;
+    bob.mortgage_remaining = 0;
+    bob.mortgage_monthly_payment = 0;
+    bob.interest_rate = 0;
+    bob.has_pet = 0;
+    bob.pet_monthly_expenses = 0;
+
+
+    double inflation_rate = 0.03;
+    double salary_growth = 0.02;
+    int months = 300;
+
+    for (int month = 1; month <= months; month++) {
+        update_alice_salary(&alice, salary_growth);
+        update_bob_salary(&bob, salary_growth);
+
+        if (alice.mortgage_remaining > 0) {
+            calculate_alice_mortgage(&alice);
+        }
+
+        bob.house_cost *= (1 + inflation_rate);
+        calculate_alice_monthly_expenses(&alice);
+        calculate_bob_monthly_expenses(&bob);
+
+        if (month % 12 == 0) {
+            process_alice_annual_bonus(&alice);
+            process_bob_annual_bonus(&bob);
+        }
+    }
+
+    printf("Alice: %.2lf rub.\n", alice.current_wealth);
+    printf("Bob: %.2lf rub.\n", bob.current_wealth);
+
+    return 0;
+}
