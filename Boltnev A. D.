@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <math.h>
+
+// Структура для хранения данных о человеке
+typedef struct {
+    double salary;
+    double monthly_expenses;
+    double current_wealth;
+    double house_cost;
+    double mortgage_remaining; 
+    double mortgage_monthly_payment; 
+    double interest_rate; 
+    int has_pet; 
+    double pet_monthly_expenses;
+} Individual;
+
+// Функция для расчёта инфляции
+double calculate_inflation(double initial_amount, double inflation_rate, int years) {
+    return initial_amount * pow(1 + inflation_rate, years);
+}
+
+
+int main() {
+    Individual alice, bob;
+
+    // Инициализация данных для Алисы
+    alice.salary = 25000;
+    alice.monthly_expenses = 5000;
+    alice.current_wealth = 0;
+    alice.mortgage_remaining = 1000000;
+    alice.mortgage_monthly_payment = 5000;
+    alice.interest_rate = 0.1;
+    alice.has_pet = 0;
+    alice.pet_monthly_expenses = 0;
+
+
+    // Инициализация данных для Боба
+    bob.salary = 28000;
+    bob.monthly_expenses = 4000;
+    bob.current_wealth = 0;
+    bob.house_cost = 0;
+    bob.mortgage_remaining = 0;
+    bob.mortgage_monthly_payment = 0;
+    bob.interest_rate = 0;
+    bob.has_pet = 0;
+    bob.pet_monthly_expenses = 0;
+
+
+    double inflation_rate = 0.03;
+    double salary_growth = 0.02;
+
+
+    int months = 300; // 30 лет * 12 месяцев
+
+    for (int month = 1; month <= months; month++) {
+        alice.salary *= (1 + salary_growth);
+        bob.salary *= (1 + salary_growth);
+
+        // Расчет платежей по ипотеке
+        alice.current_wealth -= alice.mortgage_monthly_payment;
+        alice.mortgage_remaining = alice.mortgage_remaining * (1 + alice.interest_rate / 12);
+
+
+        // Расходы Боба на аренду
+        bob.house_cost *= (1 + inflation_rate);
+        bob.current_wealth -= bob.house_cost;
+
+        // Расходы на еду и другие ежемесячные траты
+        alice.current_wealth -= alice.monthly_expenses;
+        bob.current_wealth -= bob.monthly_expenses;
+
+        // Дополнительные траты
+        if (month % 12 == 0) {
+            alice.current_wealth += alice.salary * 0.1;
+            bob.current_wealth += bob.salary * 0.1;
+        }
+    }
+
+    printf("Alice: %.2lf rub.\n", alice.current_wealth);
+    printf("Bob: %.2lf rub.\n", bob.current_wealth);
+
+    return 0;
+}
