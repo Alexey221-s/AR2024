@@ -1,1 +1,137 @@
+#include <stdio.h>
 
+typedef long long int Money; 
+
+// Структура, описывающая ипотеку
+struct Mortgage {
+    double interest_rate; 
+    Money remaining_debt; 
+    Money monthly_payment; 
+};
+
+// Структура, описывающая банковский вклад
+struct BankAccount {
+    Money balance;       
+    double interest_rate; 
+    Money monthly_deposit;
+};
+
+// Структура, описывающая человека
+struct Individual {
+    Money salary;           
+    Money monthly_expenses; 
+    Money net_worth;        
+    Money apartment_cost;  
+    struct Mortgage mortgage;
+    struct BankAccount bank_account;
+};
+
+struct Individual alice;
+struct Individual bob;
+
+
+// Инициализация данных для Алисы
+void initialize_alice() {
+    alice.net_worth = 0; 
+    alice.salary = 230000;
+    alice.monthly_expenses = 100000;
+
+    alice.mortgage.interest_rate = 0.17;
+    alice.mortgage.remaining_debt = 13000000; 
+    alice.mortgage.monthly_payment = 150000;
+}
+
+// Алиса оплачивает ипотеку
+void alice_pay_mortgage(int month) {
+    if (alice.net_worth >= alice.mortgage.monthly_payment) {
+        alice.net_worth -= alice.mortgage.monthly_payment;
+        alice.mortgage.remaining_debt -= alice.mortgage.monthly_payment;
+        if (alice.mortgage.remaining_debt < 0) alice.mortgage.remaining_debt = 0; 
+    }
+}
+
+// Обновление зарплаты Алисы
+void alice_update_salary(int month) {
+    Money salary_increase = 0;
+    if (month == 1) {
+        salary_increase = alice.salary * 0.09; 
+    }
+    alice.salary += salary_increase;
+    alice.net_worth += alice.salary;
+}
+
+
+// Вывод информации об Алисе
+void alice_print() {
+    printf("Alice: %lld Rub.\n", (alice.net_worth - alice.mortgage.remaining_debt)/1000);
+}
+
+
+// Инициализация данных для Боба
+void initialize_bob() {
+    bob.net_worth = 0;
+    bob.salary = 230000;
+    bob.monthly_expenses = 100000;
+    bob.apartment_cost = 30000;
+    bob.bank_account.balance = 0;
+    bob.bank_account.interest_rate = 0.05; 
+    bob.bank_account.monthly_deposit = 130000; 
+}
+
+
+// Обновление зарплаты Боба
+void bob_update_salary(int month) {
+    Money salary_increase = 0;
+    if (month == 1) {
+        salary_increase = bob.salary * 0.09; 
+    }
+    bob.salary += salary_increase;
+    bob.net_worth += bob.salary;
+}
+
+// Обновление банковского счета Боба
+void bob_bank_account(int month) {
+    Money monthly_savings = bob.salary - bob.monthly_expenses - bob.apartment_cost - bob.bank_account.monthly_deposit;
+    if (monthly_savings > 0) {
+        bob.bank_account.balance += bob.bank_account.monthly_deposit + monthly_savings; 
+    }
+    else {
+        bob.bank_account.balance += bob.bank_account.monthly_deposit; 
+    }
+
+
+}
+
+// Вывод информации о Бобе
+void bob_print() {
+    printf("Bob %lld Rub.\n", (bob.net_worth + bob.bank_account.balance)/1000);
+}
+
+
+// Симуляция
+void simulation() {
+    int month = 9;
+    int year = 2024;
+
+    while (!(month == 9 && year == 2054)) {
+        alice_update_salary(month);
+        alice_pay_mortgage(month);
+        bob_update_salary(month);
+        bob_bank_account(month);
+        month++;
+        if (month == 13) {
+            month = 1;
+            year++;
+        }
+    }
+}
+
+
+int main() {
+    initialize_alice();
+    initialize_bob();
+    simulation();
+    alice_print();
+    bob_print();
+    return 0;
+}
