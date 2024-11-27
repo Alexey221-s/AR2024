@@ -1,0 +1,147 @@
+#include <stdio.h>
+
+typedef long long int Money;
+
+struct Mortgage
+{
+	double rate;
+	Money credit;
+	Money platez;
+	Money month_pay;
+};
+
+struct Person
+{
+	Money salary;
+	Money account;
+	Money food;
+	Money expences;
+	struct Mortgage mortgage;
+};
+
+struct Person alice;
+struct Person bob;
+
+void alice_init()
+{
+	alice.account = 1000000;
+	alice.salary = 200000;
+	alice.food = 100000;
+	alice.expences = 20000;
+
+	alice.mortgage.platez = 1000000;
+	alice.mortgage.credit = 14000000;
+	alice.mortgage.rate = 0.17;
+	alice.mortgage.month_pay = 100000;
+	alice.account -= alice.mortgage.platez;
+}
+
+void bob_init()
+{
+	bob.account = 1000000;
+	bob.salary = 200000;
+	bob.food = 100000;
+	bob.expences = 50000;
+}
+
+void alice_salary(const int month, const int year)
+{
+	if (month == 12)
+	{
+		alice.account += alice.salary;
+	}
+	if (month == 1)
+	{
+		alice.salary *= 1.07;
+	}
+	alice.account += alice.salary;
+}
+
+void bob_salary(const int month, const int year)
+{
+	if (month == 12)
+	{
+		bob.account += bob.salary;
+	}
+	if (month == 1)
+	{
+		bob.salary *= 1.07;
+	}
+	bob.account += bob.salary;
+}
+
+void alice_mortgage()
+{
+	alice.account -= alice.mortgage.month_pay;
+}
+
+void alice_food(const int month)
+{
+	if (month == 1)
+	{
+		alice.food *= 1.1;
+	}
+	alice.account -= alice.food;
+}
+
+void alice_expences(const int month)
+{
+	alice.account -= alice.expences;
+}
+
+void bob_expences(const int month)
+{
+	bob.account -= bob.expences;
+}
+
+void bob_food(const int month)
+{
+	if (month == 1)
+	{
+		bob.food *= 1.1;
+	}
+	bob.account -= bob.food;
+}
+
+void alice_print()
+{
+	printf("Alice account = %lld \n", alice.account);
+}
+
+void bob_print()
+{
+	printf("Bob account = %lld \n", bob.account-14000000);
+}
+
+void simulation()
+{
+	int month = 9;
+	int year = 2024;
+
+	while (!((month == 9) && (year == 2024 + 30)))
+	{
+		alice_salary(month, year);
+		alice_mortgage();
+		alice_food(month);
+		alice_expences(month);
+		bob_salary(month, year);
+		bob_food(month);
+		bob_expences(month);
+		month++;
+		if (month == 13)
+		{
+			month = 1;
+			year++;
+		}
+	}
+}
+
+int main()
+{
+	alice_init();
+	bob_init();
+	simulation();
+	alice_print();
+	bob_print();
+	return 1;
+}
